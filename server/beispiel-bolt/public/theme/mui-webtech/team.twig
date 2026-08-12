@@ -1,0 +1,61 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    {% if record|default %}
+
+        <header class="custom-hero d-flex align-items-center" style="background:
+            linear-gradient(160deg, rgba(80, 30, 140, 0.8) 0%, rgba(0, 70, 140, 0.2) 100%);">
+            <div class="container text-center text-white">
+
+                <h1 class="display-3 fw-bold mb-3">{{ record|title }}</h1>
+                <div class="lead fs-3">
+                    {{ record.introduction }}
+                </div>
+
+            </div>
+        </header>
+
+    {% endif %}
+
+    <div class="container">
+
+        <div class="content mb-5">
+            {{ record.body }}
+        </div>
+
+        <!-- 2. Die automatische Auflistung der Teammitglieder -->
+        <h2 class="mb-4">Unsere Team-Mitglieder</h2>
+        <div class="row">
+
+            {# Hole alle Einträge aus dem Contenttype 'team' (hier bis zu 100 Personen) #}
+            {% setcontent members = 'team' limit 100 %}
+
+            {# Schleife, die für jedes gefundene Mitglied eine Bootstrap-Karte erstellt #}
+            {% for person in members %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ person.title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-primary">{{ person.position }}</h6>
+                            <div class="card-text">{{ person.description }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Falls noch niemand im Backend erfasst wurde -->
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        Es wurden noch keine Teammitglieder erfasst.
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+{% endblock main %}
+
+{% block aside %}
+{% endblock aside %}
+
