@@ -19,9 +19,13 @@
 
     {% endif %}
 
-    <main class="flex-grow-1">
+    <div class="content">
 
         <div class="container">
+
+            <div class="my-2 p-5 border border-primary">
+                {{ record.content }}
+            </div>
 
             {% if record and record.content %}
                 <div class="row mt-5">
@@ -36,9 +40,11 @@
                 <div class="row mt-5">
                     {% for tile in record.tiles %}
                         <div class="col-md-4 d-flex align-items-stretch mb-4">
-                            <div class="card w-100 shadow-sm">
-                                <h2 class="h6 card-title fw-bold">{{ tile.tiletitle }}</h2>
-                                <div class="card-text">{{ tile.tilecontent|raw }}</div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="h4 card-title">{{ tile.tiletitle }}</h2>
+                                    <div class="card-text">{{ tile.tilecontent|raw }}</div>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -47,7 +53,7 @@
 
         </div>
 
-    </main>
+    </div>
 
 {% endblock main %}
 

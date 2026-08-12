@@ -8,7 +8,12 @@ server/beispiel-bolt
 server/beispiel-bolt/**
 !server/beispiel-bolt/README.md
 !server/beispiel-bolt/public/theme/mui-webtech
+!server/beispiel-bolt/config/bolt/config.yaml
+!server/beispiel-bolt/config/bolt/contenttypes.yaml
+!server/beispiel-bolt/config/bolt/menu.yaml
+!server/beispiel-bolt/config/services.yaml
+!server/beispiel-bolt/var/data/bolt.sqlite
 
-# mac-environment
+# mac-environmentd
 .DS_Store
 .idea

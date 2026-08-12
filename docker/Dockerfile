@@ -6,8 +6,12 @@ RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
     unzip \
     git \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install intl pdo pdo_sqlite opcache
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install intl pdo pdo_sqlite opcache exif gd
 
 # Composer global installieren
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
