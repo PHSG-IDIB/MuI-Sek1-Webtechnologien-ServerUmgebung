@@ -90,6 +90,6 @@ Da dieses Setup eine dateibasierte SQLite-Datenbank verwendet, ist die Live-Scha
 
 Dieses didaktische Setup und die dazugehörigen Dokumentationen wurden von Beat Temperli erstellt.
 
-Das gesamte Repository (inklusive Programmcode, Skripten und Lehrmaterialien) ist lizenziert unter der **Creative Commons Namensnennung - Nicht-kommerziell - Weitergabe unter gleichen Bedingungen 4.0 International (CC BY-NC-SA 4.0)**.
+Das gesamte Repository als didaktisches Setup ist lizenziert unter der **CC BY-NC-SA 4.0**. Der Programmcode an sich steht unter der GPLv3-Lizenz.
 
-Das bedeutet: Du darfst das Material für Unterrichtszwecke frei verwenden, anpassen und weitergeben, solange du den Urheber nennst, es nicht für kommerzielle Produkte verkaufst und abgeleitete Werke unter denselben Bedingungen veröffentlichst. Weitere Details zur Lizenz findest du [hier](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de).
+Das bedeutet: Du darfst das Material für Unterrichtszwecke frei verwenden, anpassen und weitergeben, solange du den Urheber nennst, es nicht für kommerzielle Produkte verwendest und daraus entstandene Werke unter denselben Bedingungen veröffentlichst. Weitere Details zur Lizenz findest du bei [creativecommons.org](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de).

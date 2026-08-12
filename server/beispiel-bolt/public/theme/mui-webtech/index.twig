@@ -1,0 +1,56 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    {% if record|default %}
+
+        <header class="custom-hero d-flex align-items-center" style="background:
+            linear-gradient(90deg, rgba(0, 70, 140, 0.8) 0%, rgba(0, 70, 140, 0.2) 100%),
+            url('{{ record.image|thumbnail(width=1024) }}') center/cover no-repeat;">
+            <div class="container text-center text-white">
+
+                <h1 class="display-3 fw-bold mb-3">{{ record|title }}</h1>
+                <div class="lead fs-3">
+                    {{ record.introduction }}
+                </div>
+
+            </div>
+        </header>
+
+    {% endif %}
+
+    <main class="flex-grow-1">
+
+        <div class="container">
+
+            {% if record and record.content %}
+                <div class="row mt-5">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8">
+                        {{ record.content_start }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if record and record.tiles %}
+                <div class="row mt-5">
+                    {% for tile in record.tiles %}
+                        <div class="col-md-4 d-flex align-items-stretch mb-4">
+                            <div class="card w-100 shadow-sm">
+                                <h2 class="h6 card-title fw-bold">{{ tile.tiletitle }}</h2>
+                                <div class="card-text">{{ tile.tilecontent|raw }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+
+    </main>
+
+{% endblock main %}
+
+{% block aside %}
+{% endblock aside %}
+

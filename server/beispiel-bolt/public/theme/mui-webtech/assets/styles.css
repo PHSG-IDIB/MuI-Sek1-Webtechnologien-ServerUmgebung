@@ -1,0 +1,16 @@
+.custom-hero {
+    /* Setzt eine eigene Hintergrundfarbe für den Hero-Bereich */
+    background-color: #2c3e50;
+
+    /* Setzt die Textfarbe auf weiss, damit sie auf dem dunklen Hintergrund lesbar ist */
+    color: #ffffff;
+
+    /* Ein bisschen mehr Innenabstand (Padding) für eine bessere Optik */
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+}
+
+/* Beispiel: Hover-Farbe der Navbar-Links leicht anpassen */
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #1abc9c;
+}

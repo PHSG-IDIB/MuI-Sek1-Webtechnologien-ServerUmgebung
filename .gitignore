@@ -1,6 +1,14 @@
+# eigenes bolt-projekt
+server/web
+server/web/**
+!server/web/.gitkeep
 
+# beispiel-bolt-projekt
+server/beispiel-bolt
+server/beispiel-bolt/**
+!server/beispiel-bolt/README.md
+!server/beispiel-bolt/public/theme/mui-webtech
 
-
-# Mac-Environment
+# mac-environment
 .DS_Store
 .idea

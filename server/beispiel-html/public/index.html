@@ -9,7 +9,7 @@
     <!-- Eigene CSS -->
     <link href="styles.css" rel="stylesheet">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -42,10 +42,47 @@
     </div>
 </header>
 
-<main class="container my-5">
+<!-- Hauptinhalt (flex-grow-1 drückt den Footer nach unten) -->
+<main class="container my-5 flex-grow-1">
+
+    <!-- Bootstrap Slider (Carousel) -->
+    <div id="carouselExampleIndicators" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner rounded shadow-sm">
+            <div class="carousel-item active">
+                <img src="https://picsum.photos/1200/400?random=1" class="d-block w-100" alt="Landschaft">
+            </div>
+            <div class="carousel-item">
+                <img src="https://picsum.photos/1200/400?random=2" class="d-block w-100" alt="Stadt">
+            </div>
+            <div class="carousel-item">
+                <img src="https://picsum.photos/1200/400?random=3" class="d-block w-100" alt="Natur">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Zurück</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Weiter</span>
+        </button>
+    </div>
+
     <h2>Inhalt der Startseite</h2>
-    <p>Hier steht ein kurzer Text. Die Farben des Hero-Bereichs oben wurden durch die styles.css überschrieben.</p>
+    <p>Der Slider oben wechselt automatisch die Bilder. Die flex-Klassen im body-Tag sorgen dafür, dass der Footer immer ganz unten bleibt.</p>
 </main>
+
+<!-- Footer -->
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p class="mb-0">&copy; 2026 Meine Webseite. Alle Rechte vorbehalten.</p>
+    </div>
+</footer>
 
 <!-- Bootstrap JS und eigenes Script -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
