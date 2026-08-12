@@ -1,0 +1,2 @@
+# Garantiert, dass Shell-Skripte immer Linux-Zeilenumbrüche behalten
+*.sh text eol=lf

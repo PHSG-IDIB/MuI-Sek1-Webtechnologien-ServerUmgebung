@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+
+  # 1. Die Arbeitsumgebung für die Studierenden
+  bolt-web:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./server/web:/var/www/html
+
+  # 2. Bolt-Beispiel-Projekt
+  beispiel-bolt:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+    volumes:
+      - ./server/beispiel-bolt:/var/www/html
+
+  # 3. Dein HTML-Beispiel
+  beispiel-html:
+    image: nginx:alpine
+    ports:
+      - "8082:80"
+    volumes:
+      - ./server/beispiel-html/public:/usr/share/nginx/html
