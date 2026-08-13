@@ -7,9 +7,8 @@ if [ ! -f "composer.json" ]; then
     # In einen temporären Ordner installieren, falls das Verzeichnis nicht komplett leer ist (z.B. wegen .DS_Store auf dem Mac)
     composer create-project bolt/project tmp_bolt --no-interaction
 
-    # Alle Dateien (auch versteckte wie .env) ins eigentliche Verzeichnis verschieben
     shopt -s dotglob
-    mv tmp_bolt/* ./
+    cp -rn tmp_bolt/* ./
     rm -rf tmp_bolt
 
     echo "Installation abgeschlossen!"
