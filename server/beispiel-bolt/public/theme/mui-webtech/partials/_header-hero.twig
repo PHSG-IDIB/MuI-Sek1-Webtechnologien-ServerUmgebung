@@ -1,0 +1,15 @@
+{% if record|default %}
+
+<header class="custom-hero d-flex align-items-center" style="background:
+            linear-gradient(160deg, rgba(80, 30, 140, 0.8) 0%, rgba(0, 70, 140, 0.2) 100%);">
+    <div class="container text-center text-white">
+
+        <h1 class="display-3 fw-bold mb-3">{{ record|title }}</h1>
+        <div class="lead fs-3">
+            {{ record.introduction }}
+        </div>
+
+    </div>
+</header>
+
+{% endif %}

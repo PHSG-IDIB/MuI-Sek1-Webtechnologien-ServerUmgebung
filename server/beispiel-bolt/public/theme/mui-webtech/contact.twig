@@ -1,0 +1,86 @@
+{% extends 'partials/_master.twig' %}
+
+{% block main %}
+
+    {% include 'partials/_header-hero.twig' %}
+
+    <div class="container">
+
+        <div class="content mt-5 mb-5">
+            {{ record.body }}
+        </div>
+
+        <div class="row">
+
+            <div class="col-md-4 mb-4">
+                <div class="card bg-light h-100 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title h5 mb-3">Kontakt</h3>
+                        <address class="card-text">
+                            {{ record.address|nl2br }}
+                        </address>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 mb-4">
+                <div class="card h-100 shadow-sm overflow-hidden">
+                    <div id="osm-map" style="width: 100%; height: 400px; background-color: #e9ecef;">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <span class="text-muted">Karte wird geladen...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Die Adresse aus dem Backend holen und für die URL aufbereiten.
+            // Zeilenumbrüche werden durch Leerschläge ersetzt, damit die API die Adresse sauber lesen kann.
+            const rawAddress = "{{ record.address|replace({'\n': ' ', '\r': ''}) }}";
+            const encodedAddress = encodeURIComponent(rawAddress);
+
+            // 2. Anfrage an die Nominatim API senden
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}`)
+                .then(response => response.json())
+                .then(data => {
+                    const mapContainer = document.getElementById('osm-map');
+
+                    if (data && data.length > 0) {
+                        // Koordinaten des besten Treffers auslesen
+                        const lat = data[0].lat;
+                        const lon = data[0].lon;
+
+                        // Platzhalter-Text entfernen
+                        mapContainer.innerHTML = '';
+
+                        // 3. Karte initialisieren
+                        const map = L.map('osm-map').setView([lat, lon], 16);
+
+                        // Karten-Kacheln von OpenStreetMap laden
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            maxZoom: 19,
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                        }).addTo(map);
+
+                        // Marker setzen und ein kleines Popup mit der Adresse hinzufügen
+                        L.marker([lat, lon]).addTo(map)
+                            .bindPopup(`<b>Adresse:</b><br>${rawAddress}`)
+                            .openPopup();
+                    } else {
+                        // Falls die Adresse nicht gefunden wurde
+                        mapContainer.innerHTML = '<div class="p-4 text-danger">Die eingegebene Adresse konnte auf der Karte nicht gefunden werden. Bitte überprüfe die Schreibweise.</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Fehler beim Laden der Koordinaten:", error);
+                    document.getElementById('osm-map').innerHTML = '<div class="p-4 text-danger">Verbindungsfehler zur Kartenschnittstelle.</div>';
+                });
+        });
+    </script>
+{% endblock %}

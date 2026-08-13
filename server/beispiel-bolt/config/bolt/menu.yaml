@@ -8,6 +8,8 @@ main:
     class: homepage
   - label: Team
     link: page/team
+  - label: Kontakt
+    link: page/kontakt
   - label: boltcms
     link: https://boltcms.io
     title: Visit the excellent Bolt website!
