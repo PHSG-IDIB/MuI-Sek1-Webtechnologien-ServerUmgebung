@@ -5,7 +5,7 @@ if [ ! -f "composer.json" ]; then
     echo "Bolt CMS wird zum ersten Mal heruntergeladen..."
 
     # In einen temporären Ordner installieren, falls das Verzeichnis nicht komplett leer ist (z.B. wegen .DS_Store auf dem Mac)
-    composer create-project bolt/project tmp_bolt --no-interaction
+    composer create-project bolt/project:^6.0 tmp_bolt --no-interaction
 
     shopt -s dotglob
     cp -rn tmp_bolt/* ./

@@ -29,7 +29,7 @@ Die Umgebung kann direkt aus deiner bevorzugten Entwicklungsumgebung (IDE) gesta
 <details>
 <summary><strong>Start mit Visual Studio Code</strong></summary>
 
-1. Öffne den gesamten heruntergeladenen Projektordner in VS Code.
+1. Öffne den gesamten heruntergeladenen Projektordner von VS Code aus.
 2. Gehe zu den Erweiterungen und installiere (falls nicht bereits vorhanden) die offizielle Erweiterung **"Docker"** von Microsoft.
 3. Suche im Datei-Explorer (linke Seitenleiste) die Datei `docker-compose.yml`.
 4. Mache einen **Rechtsklick** auf diese Datei und wähle **Compose Up**.
@@ -38,7 +38,7 @@ Die Umgebung kann direkt aus deiner bevorzugten Entwicklungsumgebung (IDE) gesta
 <details>
 <summary><strong>Start mit PHPStorm</strong></summary>
 
-1. Öffne den gesamten heruntergeladenen Projektordner in PHPStorm.
+1. Öffne den gesamten heruntergeladenen Projektordner von PHPStorm aus.
 2. Öffne den Projektbaum auf der linken Seite.
 3. Mache einen **Rechtsklick** auf die Datei `docker-compose.yml`.
 4. Wähle im Kontextmenü **Run 'Docker'**. (PHPStorm hat die Docker-Unterstützung in der Regel bereits integriert. Alternativ öffnet sich unten der "Services"-Tab, in dem du die Container starten und überwachen kannst).
@@ -54,7 +54,7 @@ Sobald die Container laufen, kannst du die Projekte unter folgenden Adressen in 
 
 * **Deine eigene Webseite:** [http://localhost:8080](http://localhost:8080)
     * *Ordner:* `server/web/`
-    * Hier programmierst du deine Lösung. Die Einstiegsdatei liegt in `server/web/public/`.
+    * Hier programmierst du deine Webseite für den Leistungsnachweis. Die Einstiegsdatei liegt in `server/web/public/`.
 * **Beispiel 1 (Bolt CMS):** [http://localhost:8081](http://localhost:8081)
     * *Ordner:* `server/beispiel-bolt/`
     * Eine vorbereitete Bolt-Webseite als Referenz.
@@ -73,6 +73,7 @@ Wenn du mit der Arbeit fertig bist, solltest du den lokalen Server beenden, um R
 
 * **Visual Studio Code:** Rechtsklick auf `docker-compose.yml` -> **Compose Down**
 * **PHPStorm:** Im "Services"-Tab unten den laufenden Container stoppen oder Rechtsklick auf die `docker-compose.yml` -> **Stop**
+* Docker kannst du nun stoppen und beenden
 
 ## 6. Live-Schaltung (FTP-Upload)
 
