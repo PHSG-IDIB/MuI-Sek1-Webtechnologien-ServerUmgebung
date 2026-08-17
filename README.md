@@ -67,6 +67,8 @@ Sobald die Container laufen, kannst du die Projekte unter folgenden Adressen in 
 Jedes Mal, wenn du eine Datei in deiner IDE speicherst, wird die Änderung sofort aktiv. Lade einfach die Seite in deinem Browser neu.
 Die Bolt-Umgebung ist bereits im Hintergrund vorkonfiguriert, damit der Cache automatisch geleert wird und Änderungen ohne Verzögerung sichtbar werden.
 
+Wie du mit deiner eigenen Webseite startest, findest du in der [Anleitung](./README-EIGENER-SERVER.md) detailliert beschrieben.
+
 ## 5. Umgebung beenden
 
 Wenn du mit der Arbeit fertig bist, solltest du den lokalen Server beenden, um Ressourcen auf deinem Computer zu sparen:
