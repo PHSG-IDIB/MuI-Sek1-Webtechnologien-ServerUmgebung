@@ -13,6 +13,7 @@ server/beispiel-bolt/**
 !server/beispiel-bolt/config/bolt/menu.yaml
 !server/beispiel-bolt/config/services.yaml
 !server/beispiel-bolt/var/data/bolt.sqlite
+!server/beispiel-bolt/public/files/homepage/2026/08/940-1200x400.jpg
 
 # mac-environmentd
 .DS_Store
