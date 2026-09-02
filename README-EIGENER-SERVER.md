@@ -28,10 +28,10 @@ Damit du dich im Backend deiner neuen Webseite anmelden kannst, musst du einmali
 
 Nun geht es darum, deine Webseite zu konfigurieren und den Inhalt zu gestalten. Dies geschieht an unterschiedlichen Orten:
 
-- `/server/web/config/bolt/contenttypes.yaml`: Hier erfasst du für deine unterschiedlichen Inhaltsseiten eigene Blöcke, die im Backend ausgefüllt werden.
-- `/server/web/config/bolt/menu.yaml`: Hier trägst du die Navigation ein.
-- `/server/web/config/bolt/config.yaml`: Hier kannst du die Grundkonfiguration steuern, insbesondere musst du hier dein eigenes **Theme** verlinken.
-- `/server/web/public/theme`: Du erstellst hier einen neuen Ordner für dein eigenes **Theme** (den Ordnernamen trägst du im `config.yaml` ein).
+- `/server/own-bolt/config/bolt/contenttypes.yaml`: Hier erfasst du für deine unterschiedlichen Inhaltsseiten eigene Blöcke, die im Backend ausgefüllt werden.
+- `/server/own-bolt/config/bolt/menu.yaml`: Hier trägst du die Navigation ein.
+- `/server/own-bolt/config/bolt/config.yaml`: Hier kannst du die Grundkonfiguration steuern, insbesondere musst du hier dein eigenes **Theme** verlinken.
+- `/server/own-bolt/public/theme`: Du erstellst hier einen neuen Ordner für dein eigenes **Theme** (den Ordnernamen trägst du im `config.yaml` ein).
 
 In deinem eigenen Theme-Ordner kannst du basierend auf der Vorlage unter [beispiel-bolt/public/theme/mui-webtech](./server/beispiel-bolt/public/theme/mui-webtech)
 dein eigenes Theme mit deinen `css`, `js` und `twig`-Dateien erstellen.
@@ -49,7 +49,7 @@ Da dieses Setup eine dateibasierte SQLite-Datenbank verwendet, ist die Live-Scha
 
 1. Öffne ein FTP-Programm (z.B. FileZilla) und verbinde dich mit deinem Live-Server.
 2. Navigiere in das Web-Verzeichnis des Servers.
-3. Markiere **den gesamten Inhalt** deines Ordners `server/web/`.
+3. Markiere **den gesamten Inhalt** deines Ordners `server/own-bolt/`.
 4. Lade alle Dateien und Ordner auf den Server hoch.
    *(Achte darauf, dass auch versteckte Dateien wie `.env` und der Ordner `var/data/`, in dem deine Datenbank liegt, hochgeladen werden. Dein Live-Server muss so konfiguriert sein, dass sein DocumentRoot auf den hochgeladenen `public`-Ordner zeigt).*
 

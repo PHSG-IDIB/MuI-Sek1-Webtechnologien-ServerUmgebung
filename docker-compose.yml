@@ -8,9 +8,9 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./server/web:/var/www/html
+      - ./server/own-bolt:/var/www/html
 
-  # 2. Bolt-Beispiel-Projekt
+  # 2. Das vorgegebene Bolt-Beispiel-Projekt
   beispiel-bolt:
     build:
       context: ./docker
@@ -20,10 +20,18 @@ services:
     volumes:
       - ./server/beispiel-bolt:/var/www/html
 
-  # 3. Dein HTML-Beispiel
+  # 3. Das vorgegebene HTML-Beispiel
   beispiel-html:
     image: nginx:alpine
     ports:
       - "8082:80"
     volumes:
       - ./server/beispiel-html/public:/usr/share/nginx/html
+
+  # 4. Die Arbeitsumgebung für die einfache HTML-Seite.
+  html-web:
+    image: nginx:alpine
+    ports:
+      - "8083:80"
+    volumes:
+      - ./server/own-html/public:/usr/share/nginx/html

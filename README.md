@@ -53,14 +53,17 @@ Das Projekt ist in drei Bereiche unterteilt. Jeder Bereich hat intern einen eige
 Sobald die Container laufen, kannst du die Projekte unter folgenden Adressen in deinem Browser aufrufen:
 
 * **Deine eigene Webseite:** [http://localhost:8080](http://localhost:8080)
-    * *Ordner:* `server/web/`
-    * Hier programmierst du deine Webseite für den Leistungsnachweis. Die Einstiegsdatei liegt in `server/web/public/`.
+    * *Ordner:* `server/own-bolt/`
+    * Hier programmierst du deine Webseite für den Leistungsnachweis. Die Einstiegsdatei liegt in `server/own-bolt/public/`.
 * **Beispiel 1 (Bolt CMS):** [http://localhost:8081](http://localhost:8081)
     * *Ordner:* `server/beispiel-bolt/`
     * Eine vorbereitete Bolt-Webseite als Referenz.
 * **Beispiel 2 (HTML/CSS):** [http://localhost:8082](http://localhost:8082)
     * *Ordner:* `server/beispiel-html/`
     * Eine einfache, statische HTML-Seite mit Bootstrap als Anschauungsmaterial.
+* **Eigene HTML-/CSS-Umgebung:** [http://localhost:8083](http://localhost:8083)
+  * *Ordner:* `server/own-html/`
+  * Eine einfache, statische HTML-Seite mit Bootstrap als Anschauungsmaterial.
 
 ## 4. Entwicklung
 
@@ -83,7 +86,7 @@ Da dieses Setup eine dateibasierte SQLite-Datenbank verwendet, ist die Live-Scha
 
 1. Öffne ein FTP-Programm (z.B. FileZilla) und verbinde dich mit deinem Live-Server.
 2. Navigiere in das Web-Verzeichnis des Servers.
-3. Markiere **den gesamten Inhalt** deines Ordners `server/web/`.
+3. Markiere **den gesamten Inhalt** deines Ordners `server/own-bolt/`.
 4. Lade alle Dateien und Ordner auf den Server hoch.
    *(Achte darauf, dass auch versteckte Dateien wie `.env` und der Ordner `var/data/`, in dem deine Datenbank liegt, hochgeladen werden. Dein Live-Server muss so konfiguriert sein, dass sein DocumentRoot auf den hochgeladenen `public`-Ordner zeigt).*
 

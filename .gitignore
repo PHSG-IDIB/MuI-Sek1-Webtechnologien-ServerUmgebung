@@ -1,7 +1,7 @@
 # eigenes bolt-projekt
-server/web
-server/web/**
-!server/web/.gitkeep
+server/own-bolt
+server/own-bolt/**
+!server/own-bolt/.gitkeep
 
 # beispiel-bolt-projekt
 server/beispiel-bolt
