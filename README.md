@@ -34,7 +34,6 @@ Die Umgebung kann direkt aus deiner bevorzugten Entwicklungsumgebung (IDE) gesta
 2. Gehe zu den Erweiterungen und installiere (falls nicht bereits vorhanden) die offizielle Erweiterung **"Container Tools"** von Microsoft. VS Code merkt direkt, dass dies nötig sein könnte und öffnet ein entsprechendes Info-Fenster.
 3. Suche im Datei-Explorer (linke Seitenleiste) die Datei `docker-compose.yml`.
 4. Mache einen **Rechtsklick** auf diese Datei und wähle **Compose Up**.
-5. Beim ersten mal öffnet sich das Fenster für die Docker-Konfiguration, dabei sollte automatisch erkannt werden, wo deine Docker-Umgebung installiert wurde. Mit "OK" bestätigen.
 </details>
 
 <details>
@@ -44,6 +43,7 @@ Die Umgebung kann direkt aus deiner bevorzugten Entwicklungsumgebung (IDE) gesta
 2. Öffne den Projektbaum auf der linken Seite.
 3. Mache einen **Rechtsklick** auf die Datei `docker-compose.yml`.
 4. Wähle im Kontextmenü **Run 'Docker'**. (PHPStorm hat die Docker-Unterstützung in der Regel bereits integriert. Alternativ öffnet sich unten der "Services"-Tab, in dem du die Container starten und überwachen kannst).
+5. (Nur beim erstmaligen Start) Es öffnet sich nun ein Fenster für die Docker-Konfiguration, hier wird automatisch erkannt, wo deine Docker-Umgebung installiert wurde. Mit "OK" bestätigen. Diese wird nun mit PHPStorm verknüpft.
 </details>
 
 *Hinweis beim ersten Start: Docker lädt nun alle benötigten Werkzeuge herunter und installiert das Bolt CMS vollautomatisch. Dieser Vorgang kann beim allerersten Mal 1 bis 2 Minuten dauern.*
