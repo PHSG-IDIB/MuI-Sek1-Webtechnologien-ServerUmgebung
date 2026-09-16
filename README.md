@@ -18,7 +18,7 @@ ohne dass komplizierte lokale Installationen notwendig sind.
 <summary><strong>Anleitung für Windows</strong></summary>
 
 1. Installiere [Docker Desktop für Windows](https://www.docker.com/products/docker-desktop).
-2. **Wichtig:** Stelle sicher, dass WSL 2 (Windows Subsystem for Linux) bei der Installation aktiviert ist, da Docker darunter am effizientesten läuft.
+2. **Wichtig:** Stelle sicher, dass WSL (Windows Subsystem for Linux) bei der Installation aktiviert ist, da Docker dies braucht. Falls dies nicht direkt in Docker aktiviert werden kann, musst du WSL selber installieren: Starte die Konsole (Das Programm *CMD* öffen) und tippe `wsl --install` ein, bestätige mit `ENTER` und warte, bis die WSL startet
 3. Starte Docker Desktop, sodass es im Hintergrund läuft (sichtbar unten rechts in der Taskleiste).
 </details>
 
