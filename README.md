@@ -18,8 +18,9 @@ ohne dass komplizierte lokale Installationen notwendig sind.
 <summary><strong>Anleitung für Windows</strong></summary>
 
 1. Installiere [Docker Desktop für Windows](https://www.docker.com/products/docker-desktop).
-2. **Wichtig:** Stelle sicher, dass WSL (Windows Subsystem for Linux) bei der Installation aktiviert ist, da Docker dies braucht. Falls dies nicht direkt in Docker aktiviert werden kann, musst du WSL selber installieren: Starte die Konsole (Das Programm *CMD* öffen) und tippe `wsl --install` ein, bestätige mit `ENTER` und warte, bis die WSL startet
-3. Starte Docker Desktop, sodass es im Hintergrund läuft (sichtbar unten rechts in der Taskleiste).
+2. Starte das Programm. Falls eine Fehlermeldung erscheint (z.b. `Virtualization support not detected` oder `wsl not installed`), führe Punkt 3 aus:
+3. Starte die Konsole (Das Programm *CMD* öffen) und tippe `wsl --install` ein, bestätige mit `ENTER` und warte, bis WSL startet
+4. Nach einem Neustart vom Computer kannst du Docker Desktop starten, das Programm läuft nun im Hintergrund (sichtbar unten rechts in der Taskleiste).
 </details>
 
 ## 2. Erster Start der Umgebung
@@ -30,9 +31,10 @@ Die Umgebung kann direkt aus deiner bevorzugten Entwicklungsumgebung (IDE) gesta
 <summary><strong>Start mit Visual Studio Code</strong></summary>
 
 1. Öffne den gesamten heruntergeladenen Projektordner von VS Code aus.
-2. Gehe zu den Erweiterungen und installiere (falls nicht bereits vorhanden) die offizielle Erweiterung **"Docker"** von Microsoft.
+2. Gehe zu den Erweiterungen und installiere (falls nicht bereits vorhanden) die offizielle Erweiterung **"Container Tools"** von Microsoft. VS Code merkt direkt, dass dies nötig sein könnte und öffnet ein entsprechendes Info-Fenster.
 3. Suche im Datei-Explorer (linke Seitenleiste) die Datei `docker-compose.yml`.
 4. Mache einen **Rechtsklick** auf diese Datei und wähle **Compose Up**.
+5. Beim ersten mal öffnet sich das Fenster für die Docker-Konfiguration, dabei sollte automatisch erkannt werden, wo deine Docker-Umgebung installiert wurde. Mit "OK" bestätigen.
 </details>
 
 <details>
