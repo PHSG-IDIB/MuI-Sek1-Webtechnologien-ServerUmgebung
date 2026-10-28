@@ -16,8 +16,10 @@ Damit du dich im Backend deiner neuen Webseite anmelden kannst, musst du einmali
    ```bash
    docker compose exec bolt-web php bin/console bolt:setup
    ```
-3. Gehe durch die Installation durch, gib alle angeforderten Daten direkt in der Konsole ein.
-4. Das System fragt dich nach einem Benutzernamen, einem Passwort und einer E-Mail-Adresse. Erfasse diese Daten und merke dir insbesondere das Passwort.
+3. Gehe durch die Installation durch, gebe alle angeforderten Daten direkt in der Konsole ein.
+4. Das System fragt dich nach einem Benutzernamen, einem Passwort und einer E-Mail-Adresse. Erfasse diese Daten und merke dir insbesondere das Passwort. (Die Passwort-Eingabe ist versteckt, du siehst also nicht, was du genau eintippst.)
+
+Falls "bolt-web" nicht verfügbar sein soll (`service "bolt-web" is not running`), musst du kurz prüfen, wie dein Container genau benannt ist, das findest du in der Docker-App heraus.
 
 ## 3. Im Backend anmelden und konfigurieren
 
