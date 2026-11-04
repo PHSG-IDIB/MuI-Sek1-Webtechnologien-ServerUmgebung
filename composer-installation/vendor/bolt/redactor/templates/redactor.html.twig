@@ -1,0 +1,7 @@
+{% extends '@bolt/_partials/fields/_base.html.twig' %}
+
+{% block field %}
+
+    <textarea name="{{ name }}" id="{{ id }}" class="redactor-field d-none">{{ value|default(field.definition.get('default')) }}</textarea>
+
+{% endblock %}

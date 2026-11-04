@@ -1,0 +1,33 @@
+language: php
+
+sudo: false
+dist: trusty
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.2
+    - php: 7.3
+    - php: 7.4
+
+before_install:
+  # Set up Composer
+  - composer self-update || true
+  - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
+
+install:
+  - composer install --no-interaction $COMPOSER_FLAGS
+
+script:
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/ecs check src
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+# Cache vendor dirs
+cache:
+  directories:
+    - vendor
+    - $COMPOSER_CACHE_DIR
+    - cs_cache

@@ -1,0 +1,49 @@
+{
+    "name": "bolt/common",
+    "description": "🧰 Common utilities for all Bolt libraries",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Carson Full",
+            "email": "carsonfull@gmail.com"
+        },
+        {
+            "name": "Bob den Otter",
+            "email": "bob@twokings.nl"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.5 || ^8.0",
+        "seld/jsonlint": "^1.7",
+        "webmozart/assert": "^1.6"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.5",
+        "symfony/phpunit-bridge": "^3.4",
+        "symplify/easy-coding-standard": "^8.2.3"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Bolt\\Common\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bolt\\Common\\Tests\\": "tests"
+        },
+        "files": [
+            "tests/Fixtures/JsonMocker.php"
+        ]
+    },
+    "scripts": {
+        "lint": [
+            "ecs check src"
+        ],
+        "test": "phpunit"
+    }
+}

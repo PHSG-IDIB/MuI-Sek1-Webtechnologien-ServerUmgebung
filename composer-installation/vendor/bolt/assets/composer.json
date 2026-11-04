@@ -1,0 +1,17 @@
+{
+    "name": "bolt/assets",
+    "description": "🛠 Javascript and CSS Assets used in Bolt's backend. Do not `require` directly.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bob den Otter",
+            "email": "bob@twokings.nl"
+        }
+    ],
+    "require-dev": {
+        "bolt/core": "^6.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

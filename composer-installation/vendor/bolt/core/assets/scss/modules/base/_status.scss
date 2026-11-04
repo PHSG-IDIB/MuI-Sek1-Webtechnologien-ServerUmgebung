@@ -1,0 +1,109 @@
+//** Base | Status
+
+.apply-fa {
+  font-family: 'Font Awesome 5 Free', serif;
+  font-weight: 900;
+}
+
+.apply-fas {
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-feature-settings: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+.status {
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+  display: inline-flex;
+
+  @extend .apply-fa;
+  @extend .apply-fas;
+
+  &.is-published {
+    color: var(--status-published);
+
+    &::before {
+      content: "\f058"; // check mark
+    }
+  }
+
+  &.is-held {
+    color: var(--status-held);
+
+    &::before {
+      content: "\f057"; // times circle
+    }
+  }
+
+  &.is-draft {
+    color: var(--status-draft);
+    border-radius: 50%;
+
+    &::before {
+      content: "\f14b"; // pen-square
+    }
+  }
+
+  &.is-timed {
+    background: var(--status-timed);
+    color: $white;
+    position: relative;
+
+    &::before {
+      content: "\f017"; // clock
+      font-size: 0.6em;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-45%, -50%);
+    }
+  }
+}
+
+.badge {
+  color: #fff !important;
+
+  &.is-published {
+    background: var(--status-published);
+  }
+
+  &.is-held {
+    background: var(--status-held);
+  }
+
+  &.is-draft {
+    background: var(--status-draft);
+  }
+
+  &.is-timed {
+    background: var(--status-timed);
+  }
+}
+
+.badge-homepage,
+.badge-404,
+.badge-403,
+.badge-maintenance {
+  font-weight: normal;
+  vertical-align: middle;
+  margin-top: -0.4em;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.badge-homepage {
+  background: $secondary;
+}
+
+.badge-404,
+.badge-403 {
+  background: $warning;
+}
+
+.badge-maintenance {
+  background: $tertiary;
+}

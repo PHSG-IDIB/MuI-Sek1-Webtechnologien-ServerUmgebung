@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Bolt\Security;
+
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+
+class AdminApiVoter extends Voter
+{
+    public const ADMIN_API_ACCESS = 'ADMIN_API_ACCESS';
+
+    public function __construct(
+        private readonly Security $security
+    ) {
+    }
+
+    protected function supports(string $attribute, $subject): bool
+    {
+        return $attribute === self::ADMIN_API_ACCESS;
+    }
+
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
+    {
+        return $this->security->isGranted('api_admin');
+    }
+}
