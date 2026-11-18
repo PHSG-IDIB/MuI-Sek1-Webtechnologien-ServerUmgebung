@@ -1,8 +1,0 @@
-file: services_bolt.yaml
-since: 6.0.0
-
-add:
-  services:
-    Bolt\WeatherWidget\:
-      resource: '../vendor/bolt/weatherwidget/src/*'
-      exclude: '../vendor/bolt/weatherwidget/src/{Entity,Exception}'

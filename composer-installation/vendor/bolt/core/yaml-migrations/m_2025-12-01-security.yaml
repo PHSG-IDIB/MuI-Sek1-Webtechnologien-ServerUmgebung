@@ -1,6 +1,0 @@
-file: packages/security.yaml
-since: 6.0.0
-
-remove:
-  security:
-    enable_authenticator_manager: ~

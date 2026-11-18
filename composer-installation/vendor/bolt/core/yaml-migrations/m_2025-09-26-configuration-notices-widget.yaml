@@ -1,5 +1,0 @@
-file: extensions/bobdenotter-configurationnotices.yaml
-since: 6.0.0
-
-move: extensions/bolt-configurationnoticeswidget.yaml
-
