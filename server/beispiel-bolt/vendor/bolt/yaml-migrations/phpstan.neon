@@ -1,0 +1,9 @@
+parameters:
+    level: 8
+
+    paths:
+        - bin
+        - src
+
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true

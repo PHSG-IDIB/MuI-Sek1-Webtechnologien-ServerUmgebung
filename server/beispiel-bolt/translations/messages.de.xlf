@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="messages.de">
+    <unit id="d.dTYJX" name="Sie müssen sich anmelden, um auf diese Seite zugreifen zu können.">
+      <segment>
+        <source>Sie müssen sich anmelden, um auf diese Seite zugreifen zu können.</source>
+        <target>Sie müssen sich anmelden, um auf diese Seite zugreifen zu können.</target>
+      </segment>
+    </unit>
+    <unit id="kkwdn0W" name="Sicheren Vorschau-Link teilen">
+      <segment>
+        <source>Sicheren Vorschau-Link teilen</source>
+        <target>Sicheren Vorschau-Link teilen</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

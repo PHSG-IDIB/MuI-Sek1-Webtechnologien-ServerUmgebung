@@ -1,0 +1,45 @@
+<script src="{{ asset('assets/redactor/redactor.min.js', 'public') }}"></script>
+<link rel="stylesheet" href="{{ asset('assets/redactor/redactor.min.css', 'public') }}">
+{{ redactor_includes() }}
+<script>
+    $R.options = {
+        callbacks: {
+            image: {
+                uploadError: function(response)
+                {
+                    alert(response.message);
+                }
+            },
+            file: {
+                uploadError: function(response)
+                {
+                    alert(response.message);
+                }
+            }
+        }
+    };
+
+    function initRedactors() {
+        $('.redactor-field').removeClass('d-none');
+        $R('.redactor-field', {{ redactor_settings() }});
+    }
+
+    const observerRedactor = new MutationObserver(function (mutations) {
+        for (let mutation of mutations) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length) {
+                for (let node of mutation.addedNodes) {
+                    if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('collection-item')) {
+                        initRedactors();
+                    }
+                }
+            }
+        }
+    });
+
+    observerRedactor.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    initRedactors();
+</script>

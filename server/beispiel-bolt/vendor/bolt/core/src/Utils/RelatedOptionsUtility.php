@@ -1,0 +1,68 @@
+<?php
+
+namespace Bolt\Utils;
+
+use Bolt\Configuration\Content\ContentType;
+use Bolt\Entity\Content;
+use Bolt\Entity\Field;
+use Bolt\Storage\Query;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Traversable;
+
+/**
+ * Utility class to get the 'Related Records' as options to show as a pull-down in the Editor.
+ *
+ * Decorated by `Bolt\Cache\RelatedOptionsUtilityCacher`
+ */
+class RelatedOptionsUtility
+{
+    public function __construct(
+        private readonly Query $query,
+        private readonly ContentHelper $contentHelper,
+        private readonly UrlGeneratorInterface $router
+    ) {
+    }
+
+    /**
+     * Decorated by `Bolt\Cache\RelatedOptionsUtilityCacher`
+     */
+    public function fetchRelatedOptions(ContentType $fromContentType, string $toContentTypeSlug, string $order, string $format, bool $required, ?bool $allowEmpty, int $maxAmount, bool $linkToRecord): array
+    {
+        $pager = $this->query->getContent($toContentTypeSlug, ['order' => $order])
+            ->setMaxPerPage($maxAmount)
+            ->setCurrentPage(1);
+
+        // todo: When dropping PHP8.1 support the instanceof check can be dropped as well
+        $currentPageResults = $pager->getCurrentPageResults();
+        $records = $currentPageResults instanceof Traversable ? iterator_to_array($currentPageResults) : (array) $currentPageResults;
+        $fromContentTypeRelationDefinition = $fromContentType->get('relations')->get($toContentTypeSlug);
+        $options = [];
+
+        // We need to add this as a 'dummy' option for when the user is allowed
+        // not to pick an option. This is needed, because otherwise the `select`
+        // would default to the first one.
+        if (Field::settingsAllowEmpty($allowEmpty, $required)) {
+            $options[] = [
+                'key' => '',
+                'value' => '',
+            ];
+        }
+
+        /** @var Content $record */
+        foreach ($records as $key => $record) {
+            $options[$key] = [
+                'key' => $record->getId(),
+                'value' => $this->contentHelper->get($record, $format),
+            ];
+
+            // Generate URL for related record if the link_to_record option is defined in relations in the contenttypes.yaml
+            if (isset($fromContentTypeRelationDefinition['link_to_record'])) {
+                if ($fromContentTypeRelationDefinition['link_to_record']) {
+                    $options[$key]['link_to_record_url'] = $this->router->generate('bolt_content_edit', ['id' => $record->getId()]);
+                }
+            }
+        }
+
+        return $options;
+    }
+}

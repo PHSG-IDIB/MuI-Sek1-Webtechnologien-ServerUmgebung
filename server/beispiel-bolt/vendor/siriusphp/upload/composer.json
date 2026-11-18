@@ -1,0 +1,64 @@
+{
+    "name": "siriusphp/upload",
+    "description": "Framework agnostic upload library",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "form",
+        "upload",
+        "validation",
+        "file",
+        "file upload",
+        "security",
+        "psr-7"
+    ],
+    "authors": [
+        {
+            "name": "Adrian Miu",
+            "email": "adrian@adrianmiu.ro"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "siriusphp/validation": "^4.0"
+    },
+    "require-dev": {
+        "laminas/laminas-diactoros": "^3.3",
+        "symfony/http-foundation": "^6.3",
+        "pestphp/pest": "^2.24",
+        "pestphp/pest-plugin-drift": "^2.5",
+        "symfony/mime": "^6.3",
+        "phpstan/phpstan": "^1.10"
+    },
+    "suggest": {
+    	"league/flysystem": "To upload to different destinations, not just to the local file system",
+    	"knplabs/gaufrette": "Alternative filesystem abstraction library for upload destinations"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sirius\\Upload\\": "src/"
+        }
+    },
+    "scripts": {
+        "stan": [
+            "php vendor/bin/phpstan analyse"
+        ],
+        "csfix": [
+            "tools/php-cs-fixer/vendor/bin/php-cs-fixer fix  --standard=PSR-2 src"
+        ],
+        "test": [
+            "php vendor/bin/pest"
+        ],
+        "build-docs": [
+            "php couscous.phar generate --target=build/docs/ ./docs"
+        ],
+        "docs": [
+            "cd docs && php ../couscous.phar preview"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

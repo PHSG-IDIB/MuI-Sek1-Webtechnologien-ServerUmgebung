@@ -1,0 +1,117 @@
+<?php
+
+declare (strict_types=1);
+namespace ECSPrefix202611\Entropy\Console;
+
+use ECSPrefix202611\Entropy\Attribute\RelatedTest;
+use ECSPrefix202611\Entropy\Console\Contract\CommandInterface;
+use ECSPrefix202611\Entropy\Console\Enum\ExitCode;
+use ECSPrefix202611\Entropy\Console\Exception\ConsoleInputMappingException;
+use ECSPrefix202611\Entropy\Console\Input\InputParser;
+use ECSPrefix202611\Entropy\Console\Mapper\CLIRequestMapper;
+use ECSPrefix202611\Entropy\Console\Output\CommandHelpFactory;
+use ECSPrefix202611\Entropy\Console\Output\HelpPrinter;
+use ECSPrefix202611\Entropy\Console\Output\OutputPrinter;
+use ECSPrefix202611\Entropy\Tests\Console\ConsoleApplication\ConsoleApplicationTest;
+use Throwable;
+final class ConsoleApplication
+{
+    /**
+     * @var \Entropy\Console\Output\HelpPrinter
+     */
+    private $helpPrinter;
+    /**
+     * @var \Entropy\Console\Output\OutputPrinter
+     */
+    private $outputPrinter;
+    /**
+     * @var \Entropy\Console\Output\CommandHelpFactory
+     */
+    private $commandHelpFactory;
+    /**
+     * @var \Entropy\Console\Input\InputParser
+     */
+    private $inputParser;
+    /**
+     * @var \Entropy\Console\CommandRegistry
+     */
+    private $commandRegistry;
+    /**
+     * @var \Entropy\Console\Mapper\CLIRequestMapper
+     */
+    private $cliRequestMapper;
+    /**
+     * @var string|null
+     */
+    private $version;
+    public function __construct(HelpPrinter $helpPrinter, OutputPrinter $outputPrinter, CommandHelpFactory $commandHelpFactory, InputParser $inputParser, CommandRegistry $commandRegistry, CLIRequestMapper $cliRequestMapper)
+    {
+        $this->helpPrinter = $helpPrinter;
+        $this->outputPrinter = $outputPrinter;
+        $this->commandHelpFactory = $commandHelpFactory;
+        $this->inputParser = $inputParser;
+        $this->commandRegistry = $commandRegistry;
+        $this->cliRequestMapper = $cliRequestMapper;
+    }
+    /**
+     * Printed on "--version" or "-V", e.g. "Rector 2.1.0"
+     */
+    public function setVersion(string $version): void
+    {
+        $this->version = $version;
+    }
+    /**
+     * @param mixed[] $argv
+     * @return ExitCode::*
+     */
+    public function run(array $argv): int
+    {
+        $cliRequest = $this->inputParser->parse($argv);
+        if ($this->version !== null && array_intersect(['version', 'V'], array_keys($cliRequest->getOptions())) !== []) {
+            $this->outputPrinter->writeln($this->version);
+            return ExitCode::SUCCESS;
+        }
+        $commandName = $cliRequest->getCommandName();
+        // no command name given - fall back to the default command, or show help
+        if ($commandName === null) {
+            $defaultCommand = $this->commandRegistry->getDefault();
+            $wantsHelp = array_intersect(['h', 'help'], array_keys($cliRequest->getOptions())) !== [];
+            if (!$defaultCommand instanceof CommandInterface || $wantsHelp) {
+                $this->helpPrinter->print();
+                return ExitCode::SUCCESS;
+            }
+            $commandName = $defaultCommand->getName();
+        }
+        if (!$this->commandRegistry->has($commandName)) {
+            $defaultCommand = $this->commandRegistry->getDefault();
+            // with a default command, an unknown leading token is its first argument (e.g. "ecs src")
+            if (!$defaultCommand instanceof CommandInterface) {
+                fwrite(\STDERR, sprintf("Unknown command: %s\n\n", $commandName));
+                $this->helpPrinter->print();
+                return ExitCode::INVALID_COMMAND;
+            }
+            $cliRequest = $cliRequest->withCommandNameAndPrependedArgument($defaultCommand->getName(), $commandName);
+            $commandName = $defaultCommand->getName();
+        }
+        try {
+            $command = $this->commandRegistry->get($commandName);
+            if ($cliRequest->isCommandHelp()) {
+                // build command help here :)
+                $commandHelp = $this->commandHelpFactory->build($command);
+                $this->outputPrinter->writeln($commandHelp);
+                return ExitCode::SUCCESS;
+            }
+            $runArguments = $this->cliRequestMapper->resolveArguments($command, $cliRequest);
+            return $command->run(...$runArguments);
+        } catch (ConsoleInputMappingException $consoleInputMappingException) {
+            // user input error - show a clean message without a stack trace
+            $this->outputPrinter->redBackground('Run failed: ' . $consoleInputMappingException->getMessage());
+            return ExitCode::ERROR;
+        } catch (Throwable $throwable) {
+            $this->outputPrinter->redBackground('Run failed: ' . $throwable->getMessage());
+            $this->outputPrinter->newline();
+            $this->outputPrinter->writeln($throwable->getTraceAsString());
+            return ExitCode::ERROR;
+        }
+    }
+}

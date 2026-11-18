@@ -1,0 +1,15 @@
+file: packages/api_platform.yaml
+since: 6.0.0
+
+add:
+  api_platform:
+    serializer:
+      hydra_prefix: true
+    defaults:
+      normalization_context:
+        skip_null_values: false
+
+  when@prod:
+    api_platform:
+      graphql:
+        introspection: false

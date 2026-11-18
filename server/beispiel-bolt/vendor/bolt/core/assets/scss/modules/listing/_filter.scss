@@ -1,0 +1,98 @@
+//** Lisitng | Filter
+
+@use "sass:math";
+
+.listing__filter {
+  display: flex;
+  justify-content: space-between;
+  min-height: 40px;
+  //background-color: #fff;
+  padding: 0.5rem 0 0.5rem 0;
+  border-radius: $border-radius;
+  overflow: hidden;
+  margin-right: -0.15rem;
+
+  &:last-of-type {
+    margin-bottom: $spacer;
+  }
+
+  &--controls {
+    flex: 1 1 100%;
+    text-align: right;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: flex-end;
+
+    li {
+      margin-right: math.div($spacer, 3);
+
+      &:last-child {
+        margin-right: 0.15rem;
+      }
+
+      &.control--left {
+        margin-left: auto;
+      }
+
+      &.control--checkbox {
+        padding: 0.5rem;
+      }
+    }
+
+    .custom-checkbox {
+      padding: 0.625rem;
+      width: 32px;
+      height: 34px;
+      border: 1px solid var(--foreground-border);
+
+      .custom-control-label {
+        &::before,
+        &::after {
+          top: -0.125rem;
+          left: -0.8125rem;
+        }
+      }
+    }
+
+    .control--button {
+      transition: $transition-base;
+      color: var(--shade);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      background: var(--foreground);
+      border-radius: $border-radius;
+      box-shadow: $card-box-shadow;
+      padding: $spacer*0.4 $spacer*0.5;
+      font-size: 0.875rem;
+      min-height: 2.125rem;
+      border: 1px solid var(--foreground-border);
+
+      &:hover {
+        cursor: pointer;
+        background: var(--shade-100);
+      }
+
+      &:focus {
+        outline: solid 0.15rem;
+        box-shadow: $input-btn-focus-box-shadow;
+      }
+
+      &.is-selected {
+        background-color: rgb(247, 247, 247);
+      }
+
+      &.is-active {
+        background: var(--primary);
+        color: var(--foreground);
+      }
+
+      .fas {
+        margin-right: 0;
+      }
+    }
+  }
+}

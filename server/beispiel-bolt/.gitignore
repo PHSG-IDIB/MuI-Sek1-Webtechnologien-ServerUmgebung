@@ -1,0 +1,40 @@
+# Comment out the following line, if you wish to store your SQLite database in Git
+
+### File-system cruft and temporary files
+__*
+._*
+.*.swp
+.swp
+!symfony.lock
+*lock.json
+.buildpath
+
+### Platfom-specific files
+.DS_Store
+thumbs.db
+Vagrantfile
+.vagrant*
+.idea
+.php-version
+.vscode/*
+*.code-workspace
+appveyor.yml
+
+###> Docker ###
+docker-compose.override.yml
+docker-compose.override.yaml
+###< Docker ###
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/var/cache/*
+!/var/cache/.gitkeep
+/var/log/*
+!/var/log/.gitkeep
+!/var/data/.gitkeep
+/var/sessions/*
+!/var/sessions/.gitkeep
+.web-server-pid
+###< symfony/framework-bundle ###

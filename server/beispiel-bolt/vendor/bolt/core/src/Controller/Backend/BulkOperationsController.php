@@ -1,0 +1,106 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Bolt\Controller\Backend;
+
+use Bolt\Controller\CsrfTrait;
+use Bolt\Entity\Content;
+use Bolt\Event\ContentEvent;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Throwable;
+
+#[IsGranted(attribute: 'bulk_operations')]
+class BulkOperationsController extends AbstractController implements BackendZoneInterface
+{
+    use CsrfTrait;
+
+    private ?ObjectManager $em = null;
+
+    public function __construct(
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly ManagerRegistry $managerRegistry,
+        private readonly HttpUtils $httpUtils,
+    ) {
+    }
+
+    public function em(): ObjectManager
+    {
+        return $this->em ??= $this->managerRegistry->getManager();
+    }
+
+    #[Route(path: '/bulk/status/{status}', name: 'bolt_bulk_status', methods: [Request::METHOD_POST])]
+    public function status(Request $request, string $status): Response
+    {
+        $this->validateCsrf($request, 'batch');
+        $formData = $request->request->getString('records') ?? '';
+        $recordIds = array_map(intval(...), explode(',', $formData));
+
+        $records = $this->findRecordsFromIds($recordIds);
+
+        foreach ($records as $record) {
+            $record->setStatus($status);
+            $this->em()->persist($record);
+        }
+
+        $this->em()->flush();
+
+        $this->addFlash('success', 'content.status_changed_successfully');
+
+        return $this->httpUtils->createRedirectResponse(
+            $request,
+            $request->headers->get('referer') ?? $this->generateUrl('bolt_dashboard')
+        );
+    }
+
+    #[Route(path: '/bulk/delete', name: 'bolt_bulk_delete', methods: [Request::METHOD_POST])]
+    public function delete(Request $request): Response
+    {
+        $this->validateCsrf($request, 'batch');
+        $formData = $request->request->getString('records') ?? '';
+        $recordIds = array_map(intval(...), explode(',', $formData));
+
+        $record = null;
+        $records = $this->findRecordsFromIds($recordIds);
+
+        foreach ($records as $record) {
+            $this->em()->remove($record);
+        }
+
+        if ($record instanceof Content) {
+            $event = new ContentEvent($record);
+            $this->dispatcher->dispatch($event, ContentEvent::POST_DELETE);
+        }
+
+        $this->em()->flush();
+
+        $this->addFlash('success', 'content.deleted_successfully');
+
+        return $this->httpUtils->createRedirectResponse(
+            $request,
+            $request->headers->get('referer') ?? $this->generateUrl('bolt_dashboard')
+        );
+    }
+
+    private function findRecordsFromIds(array $ids): array
+    {
+        $records = [];
+
+        foreach ($ids as $id) {
+            try {
+                $records[] = $this->em()->find(Content::class, $id);
+            } catch (Throwable) {
+            }
+        }
+
+        return $records;
+    }
+}

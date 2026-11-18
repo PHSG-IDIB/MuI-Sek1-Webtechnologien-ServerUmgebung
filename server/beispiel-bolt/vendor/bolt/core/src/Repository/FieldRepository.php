@@ -1,0 +1,150 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Bolt\Repository;
+
+use Bolt\Doctrine\JsonHelper;
+use Bolt\Entity\Field;
+use Bolt\Entity\FieldInterface;
+use Bolt\Entity\FieldParentInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Illuminate\Support\Collection;
+
+/**
+ * @extends ServiceEntityRepository<Field>
+ */
+class FieldRepository extends ServiceEntityRepository
+{
+    private static ?EntityManagerInterface $em = null;
+
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Field::class);
+    }
+
+    public static function setEntityManager(EntityManagerInterface $em): void
+    {
+        self::$em = $em;
+    }
+
+    private function getQueryBuilder(?QueryBuilder $qb = null): QueryBuilder
+    {
+        return $qb ?: $this->createQueryBuilder('field');
+    }
+
+    public function findOneBySlug(string $slug): ?Field
+    {
+        $qb = $this->getQueryBuilder();
+        $connection = $qb->getEntityManager()->getConnection();
+
+        [$where, $slug] = JsonHelper::wrapJsonFunction('translations.value', $slug, $connection);
+
+        return $qb
+            ->innerJoin('field.translations', 'translations')
+            ->addSelect('translations')
+            ->andWhere($where . ' = :slug')
+            ->setParameter('slug', $slug)
+            ->andWhere('field instance of :type')
+            ->setParameter('type', 'slug')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    public function findAllBySlug(string $slug): array
+    {
+        $qb = $this->getQueryBuilder();
+        $connection = $qb->getEntityManager()->getConnection();
+
+        [$where, $slug] = JsonHelper::wrapJsonFunction('translations.value', $slug, $connection);
+
+        return $qb
+            ->innerJoin('field.translations', 'translations')
+            ->addSelect('translations')
+            ->andWhere($where . ' = :slug')
+            ->setParameter('slug', $slug)
+            ->andWhere('field INSTANCE OF :type')
+            ->setParameter('type', 'slug')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllByParent(Field $field): ?array
+    {
+        if (! $field instanceof FieldParentInterface || ! $field->getId()) {
+            return [];
+        }
+
+        $qb = $this->getQueryBuilder();
+
+        return $qb
+            ->andWhere('field.parent = :parentId')
+            ->setParameter('parentId', $field->getId())
+            ->orderBy('field.sortorder', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public static function factory(Collection $definition, string $name = '', string $label = ''): Field
+    {
+        $type = $definition['type'];
+        $classname = self::getFieldClassname($type);
+
+        if ($classname && class_exists($classname)) {
+            $field = new $classname();
+        } else {
+            $field = new Field();
+        }
+
+        if ($name !== '') {
+            $field->setName($name);
+        }
+
+        $nameOrType = empty($name) ? $type : $name;
+        $field->setDefinition($nameOrType, $definition);
+
+        if ($label !== '') {
+            $field->setLabel($label);
+        }
+
+        if ($definition->has('default_locale')) {
+            $field->setDefaultLocale($definition->get('default_locale'));
+            $field->setLocale($definition->get('default_locale'));
+        }
+
+        return $field;
+    }
+
+    /**
+     * @return class-string<Field>|null
+     */
+    public static function getFieldClassname(string $type): ?string
+    {
+        // The classname we want
+        $classname = ucwords($type) . 'Field';
+
+        /** @var array<class-string> $classes */
+        $classes = array_map(
+            fn (ClassMetadata $entity): string => $entity->getName(),
+            self::$em->getMetadataFactory()->getAllMetadata()
+        );
+
+        // Classnames of all fields (classes that implement Bolt\Entity\FieldInterface)
+        /** @var Collection<int, class-string<Field>> $allFields */
+        $allFields = collect($classes)->filter(
+            fn (string $class): bool => in_array(FieldInterface::class, class_implements($class), true)
+        );
+
+        // Classnames that end with $classname
+        $match = $allFields->filter(
+            fn (string $class): bool => substr_compare($class, $classname, mb_strlen($class) - mb_strlen($classname), mb_strlen($classname)) === 0
+        );
+
+        return $match->isNotEmpty() ? $match->first() : null;
+    }
+}

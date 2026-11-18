@@ -1,0 +1,290 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Bolt\Controller\Backend\Async;
+
+use Bolt\Common\Str;
+use Bolt\Configuration\Config;
+use Bolt\Controller\CsrfTrait;
+use Bolt\Factory\MediaFactory;
+use Bolt\Twig\TextExtension;
+use Bolt\Utils\UrlSafetyChecker;
+use Cocur\Slugify\Slugify;
+use Doctrine\ORM\EntityManagerInterface;
+use enshrined\svgSanitize\Sanitizer;
+use RuntimeException;
+use Sirius\Upload\Handler;
+use Sirius\Upload\Result\File;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Path;
+use Symfony\Component\HttpClient\NoPrivateNetworkHttpClient;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\FileBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\Url;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Throwable;
+
+#[IsGranted(attribute: 'upload')]
+class UploadController extends AbstractController implements AsyncZoneInterface
+{
+    use CsrfTrait;
+
+    public function __construct(
+        private MediaFactory $mediaFactory,
+        private EntityManagerInterface $em,
+        private Config $config,
+        private TextExtension $textExtension,
+        private Filesystem $filesystem,
+        private TagAwareCacheInterface $cache,
+        private HttpClientInterface $httpClient
+    ) {
+    }
+
+    #[Route(path: '/upload-url', name: 'bolt_async_upload_url', methods: [Request::METHOD_POST])]
+    public function handleURLUpload(Request $request, ValidatorInterface $validator): Response
+    {
+        try {
+            $this->validateCsrf($request, 'upload');
+        } catch (InvalidCsrfTokenException $e) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => 'Invalid CSRF token',
+                ],
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $url = $request->get('url', '');
+
+        // Make sure the submitting URL is a valid URL
+        $violations = $validator->validate($url, new Url());
+        if ($violations->count() !== 0) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => $violations->get(0)->getMessage(),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Prevent SSRF: only fetch URLs with an allowed scheme that resolve to
+        // a public IP address (not a private, reserved or loopback address).
+        try {
+            UrlSafetyChecker::assertSafe($url);
+        } catch (Throwable $e) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => $e->getMessage(),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $tmpFolder = $this->getParameter('kernel.cache_dir') . DIRECTORY_SEPARATOR . 'tmpupload';
+        $tmpFile = $tmpFolder . DIRECTORY_SEPARATOR . bin2hex(random_bytes(6));
+
+        try {
+            // Make sure temporary folder exists
+            $this->filesystem->mkdir($tmpFolder);
+            // Fetch the file. `UrlSafetyChecker` above only validates the
+            // submitted URL; the download itself follows redirects, so it is
+            // performed through a client that re-validates the address actually
+            // connected to on every hop. This prevents SSRF bypasses via HTTP
+            // redirects or DNS rebinding to a private/reserved/loopback address.
+            $this->downloadUrlToFile($url, $tmpFile);
+        } catch (Throwable $e) {
+            $this->filesystem->remove($tmpFile);
+
+            return new JsonResponse([
+                'error' => [
+                    'message' => $e->getMessage(),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $file = new UploadedFile($tmpFile, basename((string) $url));
+        $bag = new FileBag();
+        $bag->add([$file]);
+        $request->files = $bag;
+
+        $response = $this->handleUpload($request);
+
+        // The file is automatically deleted. It may be that we don't need this.
+        $this->filesystem->remove($tmpFile);
+
+        return $response;
+    }
+
+    /**
+     * Download a remote URL to a local file through an SSRF-guarded HTTP client.
+     *
+     * The client blocks any hop (including redirects) that connects to a
+     * private, reserved, loopback or link-local address, so a public URL that
+     * redirects (or rebinds) to an internal host cannot be fetched.
+     */
+    private function downloadUrlToFile(string $url, string $tmpFile): void
+    {
+        $client = new NoPrivateNetworkHttpClient($this->httpClient);
+        $response = $client->request('GET', $url);
+
+        $handle = fopen($tmpFile, 'wb');
+        if ($handle === false) {
+            throw new RuntimeException('Unable to open temporary file for writing.');
+        }
+
+        try {
+            foreach ($client->stream($response) as $chunk) {
+                fwrite($handle, $chunk->getContent());
+            }
+        } finally {
+            fclose($handle);
+        }
+    }
+
+    #[Route(path: '/upload', name: 'bolt_async_upload', methods: [Request::METHOD_POST])]
+    public function handleUpload(Request $request): JsonResponse
+    {
+        try {
+            $this->validateCsrf($request, 'upload');
+        } catch (InvalidCsrfTokenException $e) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => 'Invalid CSRF token',
+                ],
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        $locationName = $request->query->getString('location') ?? 'files';
+        $this->denyAccessUnlessGranted('managefiles:' . $locationName);
+
+        $path = $request->query->getString('path') ?? '';
+
+        $basepath = $this->config->getPath($locationName);
+        $target = $this->config->getPath($locationName, true, $path);
+
+        // Make sure we don't move it out of the root.
+        if (Str::startsWith(Path::makeRelative($target, $basepath), '../')) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => 'You are not allowed to do that.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $uploadHandler = new Handler($target, [
+            Handler::OPTION_AUTOCONFIRM => true,
+            Handler::OPTION_OVERWRITE => false,
+        ]);
+
+        $acceptedFileTypes = array_merge($this->config->getMediaTypes()->toArray(), $this->config->getFileTypes()->toArray());
+        $maxSize = $this->config->getMaxUpload();
+
+        $uploadHandler->addRule(
+            'extension',
+            ['allowed' => $acceptedFileTypes],
+            'The file for field \'{label}\' was <u>not</u> uploaded. It should be a valid file type. Allowed are <code>' . implode('</code>, <code>', $acceptedFileTypes) . '.',
+            'Upload file'
+        );
+
+        $uploadHandler->addRule(
+            'size',
+            ['size' => $maxSize],
+            'The file for field \'{label}\' was <u>not</u> uploaded. The upload can have a maximum filesize of <b>' . $this->textExtension->formatBytes($maxSize) . '</b>.',
+            'Upload file'
+        );
+
+        $uploadHandler->addRule(
+            'callback',
+            ['callback' => $this->sanitizeSvgContent(...)],
+            'The SVG-file could not be sanitized automatically, is it a valid SVG-file?',
+            'Upload file'
+        );
+
+        $uploadHandler->setSanitizerCallback($this->sanitiseFilename(...));
+
+        // Clear the 'files_index' cache.
+        $this->cache->invalidateTags(['fileslisting']);
+
+        try {
+            /** @var File $result */
+            $result = $uploadHandler->process($request->files->all());
+        } catch (Throwable $e) {
+            return new JsonResponse([
+                'error' => [
+                    'message' => $e->getMessage() . ' Ensure the upload does <em><u>not</u></em> exceed the maximum filesize of <b>' . $this->textExtension->formatBytes($maxSize) . '</b>, and that the destination folder (on the webserver) is writable.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        if ($result->isValid()) {
+            try {
+                $media = $this->mediaFactory->createFromFilename($locationName, $path, $result->__get('name'));
+
+                if ($this->mediaFactory->isImage($media)) {
+                    $this->em->persist($media);
+                    $this->em->flush();
+                }
+
+                return new JsonResponse($media->getFilenamePath());
+            } catch (Throwable $e) {
+                // something wrong happened, we don't need the uploaded files anymore
+                $result->clear();
+
+                throw $e;
+            }
+        }
+
+        // image was not moved to the container, where are error messages
+        $messages = $result->getMessages();
+
+        return new JsonResponse([
+            'error' => [
+                'message' => implode(', ', $messages),
+            ],
+        ], Response::HTTP_BAD_REQUEST);
+    }
+
+    private function sanitiseFilename(string $filename): string
+    {
+        $extensionSlug = new Slugify(['regexp' => '/([^a-z0-9]|-)+/']);
+        $filenameSlug = new Slugify(['lowercase' => false]);
+
+        $extension = $extensionSlug->slugify(Path::getExtension($filename));
+        $filename = $filenameSlug->slugify(Path::getFilenameWithoutExtension($filename));
+
+        return $filename . '.' . $extension;
+    }
+
+    public function sanitizeSvgContent(array $file): bool
+    {
+        if (Path::getExtension($file['name']) != 'svg') {
+            return true;
+        }
+
+        // Configure sanitizer
+        $sanitizer = new Sanitizer();
+        $sanitizer->minify(true);
+        $sanitizer->removeXMLTag(true);
+        $sanitizer->removeRemoteReferences(true);
+
+        // Retrieve file contents
+        if (! $svgFile = file_get_contents($file['tmp_name'])) {
+            return false;
+        }
+
+        // Sanitize the SVG content
+        if (false === $sanitizedSvg = $sanitizer->sanitize($svgFile)) {
+            return false;
+        }
+
+        // Write the sanitized SVG back to the temporary file
+        return file_put_contents($file['tmp_name'], $sanitizedSvg) !== false;
+    }
+}
