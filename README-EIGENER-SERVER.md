@@ -4,45 +4,35 @@ Diese Anleitung führt dich durch die ersten Schritte, wie du deine eigene, leer
 
 ## 1. Umgebung starten
 
-Falls noch nicht geschehen, starte die Docker-Umgebung. Die genaue Anleitung findest du im [README.md](server/beispiel-bolt/README.md).
-Deine eigene Webseite findest du unter http://localhost:8080. Aktuell wird dort eine Fehlermeldung erscheinen.
+Falls noch nicht geschehen, starte die Docker-Umgebung. Die genaue Anleitung findest du im [README.md](server/bolt/README.md).
+Deine eigene Webseite findest du unter http://localhost:8010. Aktuell wird dort eine Fehlermeldung erscheinen.
 
 ## 2. Administrator-Konto erstellen
 
-Damit du dich im Backend deiner neuen Webseite anmelden kannst, musst du einmalig einen Administrator-Benutzer erstellen.
-
-1. Öffne in Visual Studio Code das integrierte Terminal (im Menü oben unter *Terminal* -> *New Terminal*).
-2. Führe folgenden Befehl aus, um die Installation für deinen Arbeitsordner abzuschliessen:
-   ```bash
-   docker compose exec bolt-web php bin/console bolt:setup
-   ```
-3. Gehe durch die Installation durch, gebe alle angeforderten Daten direkt in der Konsole ein.
-4. Das System fragt dich nach einem Benutzernamen, einem Passwort und einer E-Mail-Adresse. Erfasse diese Daten und merke dir insbesondere das Passwort. (Die Passwort-Eingabe ist versteckt, du siehst also nicht, was du genau eintippst.)
-
-Falls "bolt-web" nicht verfügbar sein soll (`service "bolt-web" is not running`), musst du kurz prüfen, wie dein Container genau benannt ist, das findest du in der Docker-App heraus.
+ist bereits erstellt: `admin` und `12345678`
 
 ## 3. Im Backend anmelden und konfigurieren
 
-1. Öffne deinen Browser und rufe deine lokale Arbeitsumgebung auf: http://localhost:8080/bolt
-2. Melde dich mit den Logindaten an, die du gerade im Terminal erstellt hast.
+1. Öffne deinen Browser und rufe deine lokale Arbeitsumgebung auf: http://localhost:8010/bolt
+2. Melde dich mit den Logindaten an, die du oben findest.
 
 ## 4. Programmieren
 
 Nun geht es darum, deine Webseite zu konfigurieren und den Inhalt zu gestalten. Dies geschieht an unterschiedlichen Orten:
 
-- `/server/own-bolt/config/bolt/contenttypes.yaml`: Hier erfasst du für deine unterschiedlichen Inhaltsseiten eigene Blöcke, die im Backend ausgefüllt werden.
-- `/server/own-bolt/config/bolt/menu.yaml`: Hier trägst du die Navigation ein.
-- `/server/own-bolt/config/bolt/config.yaml`: Hier kannst du die Grundkonfiguration steuern, insbesondere musst du hier dein eigenes **Theme** verlinken.
-- `/server/own-bolt/public/theme`: Du erstellst hier einen neuen Ordner für dein eigenes **Theme** (den Ordnernamen trägst du im `config.yaml` ein).
+- `/server/bolt/config/bolt/contenttypes.yaml`: Hier erfasst du für deine unterschiedlichen Inhaltsseiten eigene Blöcke, die im Backend ausgefüllt werden.
+- `/server/bolt/config/bolt/menu.yaml`: Hier trägst du die Navigation ein.
+- `/server/bolt/config/bolt/config.yaml`: Hier kannst du die Grundkonfiguration steuern, insbesondere musst du hier dein eigenes **Theme** verlinken.
+- `/server/bolt/public/theme`: Du erstellst hier einen neuen Ordner für dein eigenes **Theme** (den Ordnernamen trägst du im `config.yaml` ein).
 
-In deinem eigenen Theme-Ordner kannst du basierend auf der Vorlage unter [beispiel-bolt/public/theme/mui-webtech](./server/beispiel-bolt/public/theme/mui-webtech)
+In deinem eigenen Theme-Ordner kannst du basierend auf der Vorlage unter [bolt/public/theme/mui-webtech](server/bolt/public/theme/mui-webtech)
 dein eigenes Theme mit deinen `css`, `js` und `twig`-Dateien erstellen.
 
 Im Backend kannst du nun bei jedem neuen Inhaltstyp selber definieren, welche Twig-Datei für diesen Inhalt verwendet werden soll.
 
 ## 5. Laufende Kontrolle
 
-Alle anpassungen im Code (PHPStorm oder VS Code) siehst du nach dem Speichern (passiert automatisch), direkt unter http://localhost:8080 bzw. http://localhost:8080/bolt.
+Alle anpassungen im Code (PHPStorm oder VS Code) siehst du nach dem Speichern (passiert mit den richtigen Einstellungen automatisch), direkt unter http://localhost:8010 bzw. http://localhost:8010/bolt.
 Dazu einfach kurz die Seite neu laden.
 
 ## 6. Live-Schaltung (FTP-Upload)

@@ -1,37 +1,19 @@
 services:
 
-  # 1. Die Arbeitsumgebung für die Studierenden
+  # 1. Die Arbeitsumgebung für das BOLT-CMS
   bolt-web:
     build:
       context: ./docker
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "8010:80"
     volumes:
-      - ./server/own-bolt:/var/www/html
-
-  # 2. Das vorgegebene Bolt-Beispiel-Projekt
-  beispiel-bolt:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
-    ports:
-      - "8081:80"
-    volumes:
-      - ./server/beispiel-bolt:/var/www/html
-
-  # 3. Das vorgegebene HTML-Beispiel
-  beispiel-html:
-    image: nginx:alpine
-    ports:
-      - "8082:80"
-    volumes:
-      - ./server/beispiel-html/public:/usr/share/nginx/html
+      - ./server/bolt:/var/www/html
 
   # 4. Die Arbeitsumgebung für die einfache HTML-Seite.
   html-web:
     image: nginx:alpine
     ports:
-      - "8083:80"
+      - "8020:80"
     volumes:
-      - ./server/own-html/public:/usr/share/nginx/html
+      - ./server/html/public:/usr/share/nginx/html
