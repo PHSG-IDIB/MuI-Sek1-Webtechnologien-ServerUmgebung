@@ -9,11 +9,20 @@ services:
       - "8010:80"
     volumes:
       - ./server/bolt:/var/www/html
+      - ./server/bolt/vendor:/tmp/vendor_host:ro
+      - vendor_data:/var/www/html/vendor
+      - cache_data:/var/www/html/var/cache
+      - log_data:/var/www/html/var/log
 
-  # 4. Die Arbeitsumgebung für die einfache HTML-Seite.
+  # 2. Die Arbeitsumgebung für die einfache HTML-Seite.
   html-web:
     image: nginx:alpine
     ports:
       - "8020:80"
     volumes:
       - ./server/html/public:/usr/share/nginx/html
+
+volumes:
+  vendor_data:
+  cache_data:
+  log_data:
